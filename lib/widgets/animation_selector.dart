@@ -8,25 +8,47 @@ class AnimationSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<RiveProvider>();
-    final animations = provider.currentFile?.animations ?? [];
+    final machines = provider.currentFile?.animations ?? []; // State machines list
 
-    if (animations.isEmpty) return const SizedBox();
+    if (machines.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(12.0),
+        child: Text(
+          "No State Machines found in this file.",
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DropdownButtonFormField<String>(
-        value: provider.activeAnimation,
-        decoration: const InputDecoration(
-          labelText: 'Select Animation',
-          border: OutlineInputBorder(),
+        value: provider.activeMachine,
+        decoration: InputDecoration(
+          labelText: 'Select State Machine',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          filled: true,
+          fillColor: Colors.grey.shade100,
         ),
-        items: animations
-            .map((name) => DropdownMenuItem(
-                  value: name,
-                  child: Text(name),
-                ))
+        dropdownColor: Colors.white,
+        items: machines
+            .map(
+              (name) => DropdownMenuItem(
+                value: name,
+                child: Text(
+                  name,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+            )
             .toList(),
-        onChanged: (value) => provider.setAnimation(value),
+        onChanged: (value) {
+          if (value != null) {
+            provider.setStateMachine(value);
+          }
+        },
       ),
     );
   }
